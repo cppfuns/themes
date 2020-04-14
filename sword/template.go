@@ -56,7 +56,7 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
                                class="btn btn-default btn-flat">{{lang "setting"}}</a>
                         </div>
                         <div class="pull-right">
-                            <a href="{{.UrlPrefix}}/logout" class="btn btn-default btn-flat">{{lang "sign out"}}</a>
+                            <a href="{{.UrlPrefix}}/logout" class="no-pjax btn btn-default btn-flat">{{lang "sign out"}}</a>
                         </div>
                     </li>
                 </ul>
@@ -126,8 +126,7 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
         <textarea {{if .Must}}required="1"{{end}} class="ace_text-input {{.Field}}"
                 {{if not .Editable}}disabled="disabled"{{end}}>{{.Value}}</textarea>
     </pre>
-    <input type="hidden" id="{{.Field}}_input" name="{{.Field}}" value='{{.Value}}'
-           placeholder="{{.Placeholder}}">
+    <textarea style="display:none;" id="{{.Field}}_input" name="{{.Field}}">{{.Value}}</textarea>
     <script>
         {{.OptionExt}}
         {{$field := (js .Field)}}
@@ -138,7 +137,7 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
         {{$field}}editor.setReadOnly({{if not .Editable}}true{{else}}false{{end}});
         {{$field}}editor.setOptions(options);
         {{$field}}editor.session.on('change', function(delta) {
-            $('#{{.Field}}_input').val({{$field}}editor.getValue());
+            $('#{{.Field}}_input').html({{$field}}editor.getValue());
         });
     </script>
 {{end}}`,"components/form/color":`{{define "form_color"}}
@@ -801,7 +800,7 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
 {{end}}`,"components/label":`{{define "label"}}
 <span class="label label-{{.Type}}" style="background-color: {{.Color}};">{{langHtml .Content}}</span>
 {{end}}`,"components/link":`{{define "link"}}
-    <a {{if .NewTab}}class="new-tab-link"{{end}} data-title="{{.Title}}" href="{{.URL}}">{{.Content}}</a>
+    <a class="{{.Class}}" {{.Attributes}} data-title="{{.Title}}" href="{{.URL}}">{{.Content}}</a>
 {{end}}`,"components/paginator":`{{define "paginator"}}
     <div style="float: left;margin-top: 21px;">{{lang "showing"}} <b>{{.CurPageStartIndex}}</b> {{lang "to"}}
         <b>{{.CurPageEndIndex}}</b> {{lang "of"}} <b>{{.Total}}</b> {{lang "entries"}} &nbsp;&nbsp;&nbsp;{{.ExtraInfo}}
@@ -1708,7 +1707,7 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
     </script>
     <script src="{{link .CdnUrl .UrlPrefix "/assets/dist/js/content.min.js"}}"></script>
     {{.AssetsList}}
-    {{if lang .Panel.Title}}
+    {{if ne .Panel.Title ""}}
         <section class="content-header">
             <div>
                 <ol class="breadcrumb">
@@ -1717,8 +1716,8 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
                 </ol>
             </div>
             <h4>
-                {{lang .Panel.Title}}
-                <small>{{lang .Panel.Description}}</small>
+                {{langHtml .Panel.Title}}
+                <small>{{langHtml .Panel.Description}}</small>
             </h4>
         </section>
     {{end}}
