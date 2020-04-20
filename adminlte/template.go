@@ -12,13 +12,13 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
                 </a>
             </li>
 
-            <li title="{{lang "Enter fullscreen"}}">
-                <a href="javascript:void(0);" class="fullpage-btn">
+            <li title="{{lang "Enter fullscreen"}}" class="fullpage-btn">
+                <a href="javascript:void(0);">
                     <i class="fa fa-arrows-alt"></i>
                 </a>
             </li>
-            <li title="{{lang "Exit fullscreen"}}">
-                <a href="javascript:void(0);" class="exit-fullpage-btn" style="display: none;">
+            <li title="{{lang "Exit fullscreen"}}" class="exit-fullpage-btn" style="display: none;">
+                <a href="javascript:void(0);">
                     <i class="fa fa-compress"></i>
                 </a>
             </li>
@@ -56,7 +56,8 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
                                class="btn btn-default btn-flat">{{lang "setting"}}</a>
                         </div>
                         <div class="pull-right">
-                            <a href="{{.UrlPrefix}}/logout" class="no-pjax btn btn-default btn-flat">{{lang "sign out"}}</a>
+                            <a href="{{.UrlPrefix}}/logout"
+                               class="no-pjax btn btn-default btn-flat">{{lang "sign out"}}</a>
                         </div>
                     </li>
                 </ul>
@@ -621,6 +622,16 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
                 <div class="box-body">
                     <div class="fields-group">
                         {{range $key, $data := $content}}
+                            {{if $data.Divider}}
+                                {{if $data.DividerTitle}}
+                                    <div class='form-group divider'>
+                                        <div class="col-sm-{{$.HeadWidth}} control-label divider-title">{{$data.DividerTitle}}</div>
+                                    </div>
+                                {{end}}
+                                <div class='col-sm-12 pb-3'>
+                                    <hr>
+                                </div>
+                            {{end}}
                             {{if $data.Hide}}
                                 <input type="hidden" name="{{$data.Field}}" value='{{$data.Value}}'>
                             {{else}}
@@ -645,6 +656,16 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
         {{range $key, $content := .TabContents}}
             <div class="tab-pane {{if eq $key 0}}active{{end}}" id="tab-form-{{$key}}">
                 {{range $key, $data := $content}}
+                    {{if $data.Divider}}
+                        {{if $data.DividerTitle}}
+                            <div class='form-group divider'>
+                                <div class="col-sm-{{$.HeadWidth}} control-label divider-title">{{$data.DividerTitle}}</div>
+                            </div>
+                        {{end}}
+                        <div class='col-sm-12 pb-3'>
+                            <hr>
+                        </div>
+                    {{end}}
                     {{if $data.Hide}}
                         <input type="hidden" name="{{$data.Field}}" value='{{$data.Value}}'>
                     {{else}}
@@ -659,17 +680,22 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
                         </div>
                     {{end}}
                 {{end}}
-                {{range $key, $d := $content}}
-                    {{if eq $d.Field $.PrimaryKey}}
-                        <input type="hidden" name="{{$.PrimaryKey}}" value='{{$d.Value}}'>
-                    {{end}}
-                {{end}}
             </div>
         {{end}}
 
     {{else if .Layout.Flow}}
 
         {{range $key, $data := .Content}}
+            {{if $data.Divider}}
+                {{if $data.DividerTitle}}
+                    <div class='form-group divider'>
+                        <div class="col-sm-{{$.HeadWidth}} control-label divider-title">{{$data.DividerTitle}}</div>
+                    </div>
+                {{end}}
+                <div class='col-sm-12 pb-3'>
+                    <hr>
+                </div>
+            {{end}}
             {{if $data.Hide}}
                 <input type="hidden" name="{{$data.Field}}" value='{{$data.Value}}'>
             {{else}}
@@ -688,6 +714,16 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
     {{else}}
 
         {{range $key, $data := .Content}}
+            {{if $data.Divider}}
+                {{if $data.DividerTitle}}
+                    <div class='form-group divider'>
+                        <div class="col-sm-{{$.HeadWidth}} control-label divider-title">{{$data.DividerTitle}}</div>
+                    </div>
+                {{end}}
+                <div class='col-sm-12 pb-3'>
+                    <hr>
+                </div>
+            {{end}}
             {{if $data.Hide}}
                 <input type="hidden" name="{{$data.Field}}" value='{{$data.Value}}'>
             {{else}}
@@ -710,12 +746,6 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
         <div class="fields-group">
             {{ template "form_components_layout" . }}
         </div>
-
-        {{range $key, $data := .Content}}
-            {{if eq $data.Field $.PrimaryKey}}
-                <input type="hidden" name="{{$.PrimaryKey}}" value='{{$data.Value}}'>
-            {{end}}
-        {{end}}
     </div>
 
 {{end}}`,"components/form_layout_flow":`{{define "form_layout_flow"}}
@@ -724,12 +754,6 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
         <div class="fields-group">
             {{ template "form_components_layout" . }}
         </div>
-
-        {{range $key, $data := .Content}}
-            {{if eq $data.Field $.PrimaryKey}}
-                <input type="hidden" name="{{$.PrimaryKey}}" value='{{$data.Value}}'>
-            {{end}}
-        {{end}}
     </div>
 
 {{end}}`,"components/form_layout_tab":`{{define "form_layout_tab"}}
@@ -763,12 +787,6 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <div class="row">
         {{ template "form_components_layout" .}}
     </div>
-
-    {{range $key, $data := .Content}}
-        {{if eq $data.Field $.PrimaryKey}}
-            <input type="hidden" name="{{$.PrimaryKey}}" value='{{$data.Value}}'>
-        {{end}}
-    {{end}}
 {{end}}`,"components/image":`{{define "image"}}
     {{if .HasModal}}
         <img src="{{.Src}}" width="{{.Width}}" height="{{.Height}}" data-toggle="modal" data-target="#img_{{.Uuid}}" style="cursor: zoom-in;">
@@ -1019,17 +1037,23 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
         {{end}}
     </script>
 {{end}}`,"components/table":`{{define "table"}}
-    <table class="table table-hover" style="min-width: {{.MinWidth}}px;table-layout: {{.Layout}};">
+    <table class="table table-{{.Style}}" style="min-width: {{.MinWidth}};table-layout: {{.Layout}};">
         {{if eq .Type "table"}}
-            <thead>
-            <tr>
-                {{range $key, $head := .Thead}}
-                    <th>
+            {{if not .HideThead}}
+                <thead>
+                <tr>
+                    {{range $key, $head := .Thead}}
+                        {{if eq $head.Width ""}}
+                            <th>
+                        {{else}}
+                            <th style="width: {{$head.Width}}">
+                        {{end}}
                         {{$head.Head}}
-                    </th>
-                {{end}}
-            </tr>
-            </thead>
+                        </th>
+                    {{end}}
+                </tr>
+                </thead>
+            {{end}}
         {{end}}
         <tbody>
         {{if eq .Type "data-table"}}
@@ -1041,10 +1065,10 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
                 {{end}}
                 {{range $key, $head := .Thead}}
                     {{if eq $head.Hide false}}
-                        {{if eq $head.Width 0}}
+                        {{if eq $head.Width ""}}
                             <th>
                         {{else}}
-                            <th style="width: {{$head.Width}}px">
+                            <th style="width: {{$head.Width}}">
                         {{end}}
                         {{$head.Head}}
                         {{if $head.Sortable}}
@@ -1143,7 +1167,13 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
                     {{end}}
                 {{else}}
                     {{range $key2, $head2 := $Thead}}
-                        <td>{{(index $info $head2.Head).Content}}</td>
+                        {{if eq $head2.Width ""}}
+                            <td>
+                        {{else}}
+                            <td style="width: {{$head2.Width}}">
+                        {{end}}
+                            {{(index $info $head2.Head).Content}}
+                        </td>
                     {{end}}
                 {{end}}
             </tr>
@@ -1710,6 +1740,12 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
         });
     </script>
     <script src="{{link .CdnUrl .UrlPrefix "/assets/dist/js/content.min.js"}}"></script>
+    {{if ne .Panel.CSS ""}}
+        <script>
+            {{.Panel.CSS}}
+        </script>
+    {{end}}
+    {{.Panel.JS}}
     {{.AssetsList}}
     {{if ne .Panel.Title ""}}
         <section class="content-header">
@@ -1728,6 +1764,12 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <section {{if ne .Panel.Title ""}}class="content"{{end}}>
         {{.Panel.Content}}
     </section>
+
+    {{if ne .Panel.JS ""}}
+        <script>
+            {{.Panel.JS}}
+        </script>
+    {{end}}
 {{end}}`,"control_panel":`{{define "control_panel"}}
     <div class="control-sidebar-bg" style="position: fixed; height: auto;"></div>
     <aside class="control-sidebar control-sidebar-dark control-sidebar-open"

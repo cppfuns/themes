@@ -551,3 +551,12 @@ form .nav-tabs-custom > .tab-content {
 a.bg-primary:focus, a.bg-primary:hover {
     background-color: #198fff;
 }
+
+.form-horizontal .form-group.divider {
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+form .control-label.divider-title {
+    color: #212121;
+}
