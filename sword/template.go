@@ -137,7 +137,7 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
         {{$field}}editor.setReadOnly({{if not .Editable}}true{{else}}false{{end}});
         {{$field}}editor.setOptions(options);
         {{$field}}editor.session.on('change', function(delta) {
-            $('#{{.Field}}_input').html({{$field}}editor.getValue());
+            $('#{{.Field}}_input').html(encodeURIComponent({{$field}}editor.getValue()));
         });
     </script>
 {{end}}`,"components/form/color":`{{define "form_color"}}
@@ -1635,9 +1635,9 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
                                     href="{{$UrlPrefix}}{{$list.Url}}" class="dd-nodrag">{{$UrlPrefix}}{{$list.Url}}</a>
                         {{end}}
                         <span class="pull-right dd-nodrag">
-                <a href="{{$EditUrl}}?id={{$list.ID}}"><i class="fa fa-edit"></i></a>
-                <a href="javascript:void(0);" data-id="{{$list.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
-            </span>
+                            <a href="{{$EditUrl}}?id={{$list.ID}}"><i class="fa fa-edit"></i></a>
+                            <a href="javascript:void(0);" data-id="{{$list.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
+                        </span>
                     </div>
                     {{if gt (len $list.ChildrenList) 0}}
                         <ol class="dd-list">
@@ -1658,10 +1658,37 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
                                                     href="{{$UrlPrefix}}{{$item.Url}}" class="dd-nodrag">{{$UrlPrefix}}{{$item.Url}}</a>
                                         {{end}}
                                         <span class="pull-right dd-nodrag">
-                                <a href="{{$EditUrl}}?id={{$item.ID}}"><i class="fa fa-edit"></i></a>
-                                <a href="javascript:void(0);" data-id="{{$item.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
-                            </span>
+                                            <a href="{{$EditUrl}}?id={{$item.ID}}"><i class="fa fa-edit"></i></a>
+                                            <a href="javascript:void(0);" data-id="{{$item.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
+                                        </span>
                                     </div>
+                                    {{if gt (len $item.ChildrenList) 0}}
+                                        <ol class="dd-list">
+                                            {{range $key2, $subItem := $item.ChildrenList}}
+                                                <li class="dd-item" data-id='{{$item.ID}}'>
+                                                    <div class="dd-handle">
+                                                        {{if eq $subItem.Url ""}}
+                                                            <i class="fa {{$subItem.Icon}}"></i>&nbsp;<strong>{{$subItem.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
+                                                                    href="{{$subItem.Url}}" class="dd-nodrag">{{$subItem.Url}}</a>
+                                                        {{else if eq $subItem.Url "/"}}
+                                                            <i class="fa {{$subItem.Icon}}"></i>&nbsp;<strong>{{$subItem.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
+                                                                    href="{{$UrlPrefix}}" class="dd-nodrag">{{$UrlPrefix}}</a>
+                                                        {{else if (isLinkUrl $subItem.Url)}}
+                                                            <i class="fa {{$subItem.Icon}}"></i>&nbsp;<strong>{{$subItem.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
+                                                                    href="{{$subItem.Url}}" class="dd-nodrag">{{$subItem.Url}}</a>
+                                                        {{else}}
+                                                            <i class="fa {{$subItem.Icon}}"></i>&nbsp;<strong>{{$subItem.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
+                                                                    href="{{$UrlPrefix}}{{$subItem.Url}}" class="dd-nodrag">{{$UrlPrefix}}{{$subItem.Url}}</a>
+                                                        {{end}}
+                                                        <span class="pull-right dd-nodrag">
+                                                            <a href="{{$EditUrl}}?id={{$subItem.ID}}"><i class="fa fa-edit"></i></a>
+                                                            <a href="javascript:void(0);" data-id="{{$subItem.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            {{end}}
+                                        </ol>
+                                    {{end}}
                                 </li>
                             {{end}}
                         </ol>
@@ -1735,6 +1762,11 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
         });
     </script>
     <script src="{{link .CdnUrl .UrlPrefix "/assets/dist/js/content.min.js"}}"></script>
+    {{if ne .Panel.CSS ""}}
+        <style>
+            {{.Panel.CSS}}
+        </style>
+    {{end}}
     {{.AssetsList}}
     {{if ne .Panel.Title ""}}
         <section class="content-header">
@@ -1755,6 +1787,12 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <section class="content">
         {{.Panel.Content}}
     </section>
+
+    {{if ne .Panel.JS ""}}
+        <script>
+            {{.Panel.JS}}
+        </script>
+    {{end}}
 {{end}}`,"control_panel":`{{define "control_panel"}}
     <div class="control-sidebar-bg" style="position: fixed; height: auto;"></div>
     <aside class="control-sidebar control-sidebar-dark control-sidebar-open"
@@ -2070,8 +2108,31 @@ var TemplateList = map[string]string{"admin_panel":`{{define "admin_panel"}}
                     </a>
                     <ul class="treeview-menu">
                         {{range $key2, $item := $list.ChildrenList}}
-                            <li><a href="{{$UrlPrefix}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}
-                                </a></li>
+                            {{if eq (len $item.ChildrenList) 0}}
+                            <li>
+                                <a href="{{$UrlPrefix}}{{$item.Url}}">
+                                    <i class="fa {{$item.Icon}}"></i> {{$item.Name}}
+                                </a>
+                            </li>
+                            {{else}}
+                                <li class="treeview {{$item.Active}}">
+                                    <a href="#">
+                                        <i class="fa {{$item.Icon}}"></i><span> {{$item.Name}}</span>
+                                        <span class="pull-right-container">
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </span>
+                                    </a>
+                                    <ul class="treeview-menu">
+                                        {{range $key3, $subItem := $item.ChildrenList}}
+                                            <li>
+                                                <a href="{{$UrlPrefix}}{{$subItem.Url}}">
+                                                    <i class="fa {{$subItem.Icon}}"></i> {{$subItem.Name}}
+                                                </a>
+                                            </li>
+                                        {{end}}
+                                    </ul>
+                                </li>
+                            {{end}}
                         {{end}}
                     </ul>
                 </li>
