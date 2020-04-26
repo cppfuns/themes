@@ -1,11 +1,11 @@
 package sword
 
 import (
+	"chain-service-system/themes/common"
+	"chain-service-system/themes/sword/resource"
 	adminTemplate "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/components"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"chain-service-system/themes/common"
-	"chain-service-system/themes/sword/resource"
 	"github.com/gobuffalo/packr/v2"
 	"html/template"
 	"strings"
